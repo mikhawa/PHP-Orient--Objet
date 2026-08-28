@@ -43,8 +43,13 @@ Ressources officielles et tutoriels complémentaires :
 - [Pierre Giraud — Introduction à la POO](https://www.pierre-giraud.com/php-mysql-apprendre-coder-cours/introduction-programmation-orientee-objet/)
 
 
+### 🎮 Les exercices
+
+Chaque chapitre a sa série d'exercices dans le dossier **[exercices/](./exercices/)** — Tamagotchi, tournoi de super-héros, machine à café, borne d'arcade et bien d'autres. Les plus emblématiques sont repris directement dans le cours, aux endroits marqués 🎮.
+
 ## Menu de navigation
 - [code](./)
+- [🎮 Exercices par chapitre](./exercices/)
 - [Introduction](#php-8-orienté-objet)
     - [0. Du procédural à l'objet](#0-du-procédural-à-lobjet)
     - [1. Les classes et les objets](#1-les-classes-et-les-objets)
@@ -145,6 +150,8 @@ Avantages immédiats :
 - on peut protéger les données contre des modifications invalides (encapsulation).
 
 Le reste du cours détaille toutes les briques de cet exemple, une à une.
+
+> 🎮 **Exercices du chapitre 0** : [la playlist du stage et la chasse aux bugs](./exercices/chapitre-00.md)
 
 ---
 
@@ -904,6 +911,8 @@ Créez une classe `CoffreFort` :
 
 Testez le scénario : un pirate essaie 3 mauvais codes, puis le bon… trop tard ! 🏴‍☠️
 
+> 🎮 **La suite du chapitre 1** : [le dé parlant, la jauge magique (property hooks) et le quiz « que va afficher ce code ? »](./exercices/chapitre-01.md)
+
 ---
 
 [Menu de navigation](#menu-de-navigation)
@@ -1509,6 +1518,8 @@ Reprenez votre `Tamagotchi` (exercice 1.A) et ajoutez :
 - une méthode statique `recensement(): string` qui affiche `🌍 Population mondiale de Tamagotchis : 42` ;
 - une constante de classe typée `final const int SEUIL_SURPOPULATION = 10;` — au-delà, `recensement()` ajoute un avertissement dramatique.
 
+> 🎮 **La suite du chapitre 2** : [le contrôle à l'entrée du zoo, la dynastie royale et le quiz « compilera, compilera pas ? »](./exercices/chapitre-02.md)
+
 ---
 
 [Menu de navigation](#menu-de-navigation)
@@ -1631,6 +1642,8 @@ Manche 2 : Vous ✋ vs 🤖 ✋ → égalité…
 
 Bonus : ajoutez `Lezard` et `Spock` (version *Big Bang Theory* 🖖) — vous mesurerez à quel point l'enum + `match` rend l'extension facile.
 
+> 🎮 **La suite du chapitre 3** : [le feu de signalisation, le menu de la cantine et la chasse aux chaînes magiques](./exercices/chapitre-03.md)
+
 ---
 
 [Menu de navigation](#menu-de-navigation)
@@ -1695,6 +1708,8 @@ namespace App\Model;
 
 throw new \Exception('Oups'); // sans le \, PHP chercherait App\Model\Exception !
 ```
+
+> 🎮 **Exercices du chapitre 4** : [les deux guildes, le piège de l'Exception et le cartographe de projet](./exercices/chapitre-04.md)
 
 ---
 
@@ -1768,6 +1783,8 @@ projet/
 ```
 
 > 💡 **Dans la vraie vie** : les projets professionnels utilisent [Composer](https://getcomposer.org/), qui génère l'autoloader PSR-4 pour vous (`composer dump-autoload`, puis `require 'vendor/autoload.php';`). Comprendre `spl_autoload_register()` vous permet de comprendre ce que Composer fait sous le capot.
+
+> 🎮 **Exercices du chapitre 5** : [le grimoire auto-magique, l'espion de l'autoloader et un aperçu sous le capot de Composer](./exercices/chapitre-05.md)
 
 ---
 
@@ -1891,6 +1908,8 @@ Client 7 : 😱 Plus de gobelets ! Revenez demain.
 
 Bonus : un bloc `finally` affiche l'état des stocks après chaque commande.
 
+> 🎮 **La suite du chapitre 6** : [le videur de la boîte de nuit, la fusée à étages et le quiz « qui attrape quoi ? »](./exercices/chapitre-06.md)
+
 ---
 
 [Menu de navigation](#menu-de-navigation)
@@ -1970,6 +1989,8 @@ $resultat = ' Bonjour le monde '
     |> str_split(...);
 // équivalent à str_split(strtoupper(trim(' Bonjour le monde ')))
 ```
+
+> 🎮 **Exercices du chapitre 7** : [le Choixpeau magique, la chaîne de fabrication, le GPS prudent et l'usine à arguments nommés](./exercices/chapitre-07.md)
 
 ---
 
@@ -2150,6 +2171,8 @@ echo $user->getName(); // Aline
 
 > 💡 C'est le principe de base de tous les **ORM** (Doctrine, Eloquent…) : transformer automatiquement des lignes SQL en objets, et inversement.
 
+> 🎮 **Exercices du chapitre 8** : [la bibliothèque interdite, le traducteur snake_case et le paquet de cartes](./exercices/chapitre-08.md)
+
 ---
 
 [Menu de navigation](#menu-de-navigation)
@@ -2298,6 +2321,8 @@ CREATE TABLE creature (
 
 Bonus : ajoutez `getStatistiques(): array` qui renvoie le nombre de créatures par espèce (GROUP BY) et affichez un rapport digne d'un ministère de la magie.
 
+> 🎮 **La suite du chapitre 9** : [les records de la borne d'arcade, la transaction du marchand et le manager générique](./exercices/chapitre-09.md) — avec une astuce SQLite pour travailler sans installer MySQL.
+
 ---
 
 [Menu de navigation](#menu-de-navigation)
@@ -2374,6 +2399,8 @@ CREATE TABLE hero (
 | Exceptions personnalisées bien utilisées | /2 |
 | Manager PDO : requêtes préparées, CRUD, classement | /4 |
 | **Le fun du déroulé des combats** 🎭 | **/(bonus infini)** |
+
+> 🎮 **Pour aller plus loin** : [six quêtes annexes pour enrichir l'Arène, deux projets alternatifs (le Gestionnaire de Potions, la Médiathèque) et la checklist de rendu](./exercices/chapitre-10.md)
 
 ---
 
