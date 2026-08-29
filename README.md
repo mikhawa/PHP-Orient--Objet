@@ -47,9 +47,12 @@ Ressources officielles et tutoriels complémentaires :
 
 Chaque chapitre a sa série d'exercices dans le dossier **[exercices/](./exercices/)** — Tamagotchi, tournoi de super-héros, machine à café, borne d'arcade et bien d'autres. Les plus emblématiques sont repris directement dans le cours, aux endroits marqués 🎮.
 
+Les **corrigés** se trouvent dans **[solutions/](./solutions/)** : un fichier PHP exécutable par exercice, testé sous PHP 8.4. Les chapitres 9 et 10 utilisent SQLite en mémoire — aucun serveur à installer.
+
 ## Menu de navigation
 - [code](./)
 - [🎮 Exercices par chapitre](./exercices/)
+- [✅ Corrigés des exercices](./solutions/)
 - [Introduction](#php-8-orienté-objet)
     - [0. Du procédural à l'objet](#0-du-procédural-à-lobjet)
     - [1. Les classes et les objets](#1-les-classes-et-les-objets)
@@ -67,7 +70,7 @@ Chaque chapitre a sa série d'exercices dans le dossier **[exercices/](./exercic
         - [1.12. Les property hooks et la visibilité asymétrique (PHP 8.4)](#112-les-property-hooks-et-la-visibilité-asymétrique-php-84)
         - [1.13. Les méthodes magiques](#113-les-méthodes-magiques)
         - [1.14. L'opérateur nullsafe (PHP 8.0)](#114-lopérateur-nullsafe-php-80)
-        - [1.15. Exercices ludiques — série 1](#115-exercices-ludiques--série-1)
+        - [1.15. Exercices](#115-exercices)
     - [2. L'héritage](#2-lhéritage)
         - [2.1. Le mot clé extends](#21-le-mot-clé-extends)
         - [2.2. L'héritage multiple](#22-lhéritage-multiple)
@@ -79,21 +82,21 @@ Chaque chapitre a sa série d'exercices dans le dossier **[exercices/](./exercic
         - [2.8. Les classes et méthodes finales](#28-les-classes-et-méthodes-finales)
         - [2.9. Les interfaces](#29-les-interfaces)
         - [2.10. Les traits](#210-les-traits)
-        - [2.11. Exercices ludiques — série 2](#211-exercices-ludiques--série-2)
+        - [2.11. Exercices](#211-exercices)
     - [3. Les énumérations (PHP 8.1)](#3-les-énumérations-php-81)
         - [3.1. Les enums purs](#31-les-enums-purs)
         - [3.2. Les enums adossés (backed enums)](#32-les-enums-adossés-backed-enums)
         - [3.3. Enums, méthodes, interfaces et match](#33-enums-méthodes-interfaces-et-match)
-        - [3.4. Exercice ludique — Pierre, Feuille, Ciseaux](#34-exercice-ludique--pierre-feuille-ciseaux)
+        - [3.4. Exercices](#34-exercices)
     - [4. Les espaces de noms](#4-les-espaces-de-noms)
     - [5. Auto-chargement des classes](#5-auto-chargement-des-classes)
     - [6. Les exceptions](#6-les-exceptions)
-        - [6.1. Exercice ludique — La machine à café](#61-exercice-ludique--la-machine-à-café)
+        - [6.1. Exercices](#61-exercices)
     - [7. Le match et les autres nouveautés PHP 8 utiles](#7-le-match-et-les-autres-nouveautés-php-8-utiles)
     - [8. Le mapping de tables SQL en classes PHP](#8-le-mapping-de-tables-sql-en-classes-php)
         - [8.1. Utilisation d'une classe abstraite pour l'hydratation](#81-utilisation-dune-classe-abstraite-pour-lhydratation)
     - [9. Les Managers](#9-les-managers)
-        - [9.1. Exercice ludique — Le Gardien de Créatures](#91-exercice-ludique--le-gardien-de-créatures)
+        - [9.1. Exercices](#91-exercices)
     - [10. Mini-projet final — L'Arène des Héros](#10-mini-projet-final--larène-des-héros)
     - [Annexe — Mémo des nouveautés objet PHP 8.0 à 8.5](#annexe--mémo-des-nouveautés-objet-php-80-à-85)
 
@@ -151,7 +154,7 @@ Avantages immédiats :
 
 Le reste du cours détaille toutes les briques de cet exemple, une à une.
 
-> 🎮 **Exercices du chapitre 0** : [la playlist du stage et la chasse aux bugs](./exercices/chapitre-00.md)
+> 🎮 **[Exercices du chapitre 0](./exercices/chapitre-00.md)** : comparer un tableau et un objet, sans rien coder de compliqué.
 
 ---
 
@@ -859,59 +862,19 @@ echo $bob->adresse?->ville;   // null (aucune erreur !)
 ---
 
 
-#### 1.15. Exercices ludiques — série 1
+#### 1.15. Exercices
 
-##### 🐣 Exercice 1.A — Le Tamagotchi
+🎮 **[Les exercices du chapitre 1](./exercices/chapitre-01.md)** — huit petites étapes qui construisent une classe `Chat` puis un mini-Tamagotchi : propriétés, méthodes, `$this`, constructeur, `private`, getter, setter.
 
-Créez une classe `Tamagotchi` :
+Un aperçu de la dernière étape :
 
-- propriétés **privées** : `$nom` (string), `$faim` (int, 50 au départ), `$energie` (int, 50 au départ), `$humeur` (int, 50 au départ) — toutes entre 0 et 100 ;
-- utilisez la **promotion de propriétés** dans le constructeur pour `$nom` ;
-- méthodes :
-    - `manger()` : faim −30, énergie +5 ;
-    - `dormir()` : énergie +40, faim +10 ;
-    - `jouer()` : humeur +25, énergie −20, faim +15 ;
-    - `parler()` : affiche un message différent selon son état (utilisez vos `if`… ou un `match`, voir chapitre 7 !) ;
-- les valeurs doivent **toujours** rester entre 0 et 100 (setters ou property hooks à la rescousse) ;
-- ajoutez `__toString()` pour afficher un joli bulletin de santé, par exemple :
+> Créez une classe `Tamagotchi` avec une propriété privée `$nom` et une propriété privée `$faim` (valant `50` au départ), un constructeur qui reçoit le nom, et trois méthodes : `manger()` (faim −20), `jouer()` (faim +15) et `etat()` qui renvoie `"🐣 Pixel a une faim de 50/100"`.
 
 ```text
-🐣 Pixel — faim: 20/100 | énergie: 35/100 | humeur: 75/100
+🐣 Pixel a une faim de 50/100
+🐣 Pixel a une faim de 30/100
+🐣 Pixel a une faim de 45/100
 ```
-
-Testez en faisant vivre une journée complète à votre créature. Bonus : si la faim atteint 100 ou l'énergie 0… affichez `💀 Pixel s'est enfui pour trouver une meilleure famille !`
-
-##### 🦸 Exercice 1.B — La fabrique de super-héros
-
-Créez une classe `SuperHeros` avec le constructeur suivant (promotion + valeurs par défaut) :
-
-```php
-public function __construct(
-    private string $nom,
-    private string $pouvoir = 'aucun',
-    private string $couleurCape = 'rouge',
-    private bool $porteSlipParDessus = false,
-) {}
-```
-
-1. Instanciez au moins 3 héros en utilisant les **arguments nommés** pour ne préciser que ce qui change.
-2. Ajoutez une méthode `sePresenter()` qui affiche par exemple :
-   `Je suis Capitaine Gaufre, mon pouvoir est de lancer du sucre impalpable, et OUI je porte mon slip par-dessus mon costume !`
-3. Ajoutez une propriété **readonly** `public readonly string $identiteSecrete` initialisée dans le constructeur, et vérifiez qu'il est impossible de la modifier (essayez, lisez l'erreur, comprenez-la !).
-
-##### 🔐 Exercice 1.C — Le coffre-fort
-
-Créez une classe `CoffreFort` :
-
-- propriété privée `$code` (string, définie dans le constructeur) ;
-- propriété privée `$contenu` (array, vide au départ) ;
-- propriété privée `$verrouille` (bool, `true` au départ) ;
-- `deverrouiller(string $tentative): bool` — compare avec le code, 3 échecs consécutifs = coffre bloqué à jamais ;
-- `deposer(string $objet): void` et `ouvrir(): array` — ne fonctionnent que si le coffre est déverrouillé.
-
-Testez le scénario : un pirate essaie 3 mauvais codes, puis le bon… trop tard ! 🏴‍☠️
-
-> 🎮 **La suite du chapitre 1** : [le dé parlant, la jauge magique (property hooks) et le quiz « que va afficher ce code ? »](./exercices/chapitre-01.md)
 
 ---
 
@@ -1482,43 +1445,25 @@ class MaClasse
 ---
 
 
-#### 2.11. Exercices ludiques — série 2
+#### 2.11. Exercices
 
-##### 🦁 Exercice 2.A — La ménagerie qui parle
+🎮 **[Les exercices du chapitre 2](./exercices/chapitre-02.md)** — on part de deux classes qui se répètent, et on découvre pourquoi l'héritage existe : `extends`, redéfinition, `parent::`, classe abstraite.
 
-1. Créez une classe **abstraite** `Animal` : propriété protégée `$nom`, méthode abstraite `crier(): string`, méthode concrète `sePresenter(): string` qui utilise `crier()`.
-2. Créez `Chien`, `Chat` et `Perroquet` qui héritent d'`Animal`. Le perroquet a une particularité : son constructeur reçoit une phrase, et `crier()` la répète deux fois avec « Croâ ! » au milieu.
-3. Marquez toutes vos redéfinitions avec `#[\Override]`.
-4. Rangez tous vos animaux dans un tableau et faites-les se présenter dans une boucle : c'est le **polymorphisme** en action !
+Le moment clé du chapitre : une seule boucle, des comportements différents, aucun `if`.
 
-```text
-Je suis Rex et je fais : Wouf !
-Je suis Félix et je fais : Miaou !
-Je suis Coco et je fais : À l'abordage ! Croâ ! À l'abordage !
+```php
+$animaux = [new Chien('Rex'), new Chat('Félix'), new Perroquet('Coco', "À l'abordage !")];
+
+foreach ($animaux as $animal) {
+    echo $animal->crier() . PHP_EOL;
+}
 ```
 
-##### ⚔️ Exercice 2.B — Le tournoi
-
-1. Créez l'interface `Combattant` du chapitre [2.9](#29-les-interfaces).
-2. Implémentez trois classes très différentes : `Chevalier` (attaques régulières), `Magicien` (attaques puissantes mais 1 fois sur 2 le sort échoue — `random_int(0, 1)`), `Poule` (1 dégât par attaque, mais 500 PV : l'usure !).
-3. Écrivez la fonction `duel(Combattant $a, Combattant $b): Combattant` qui fait combattre tour par tour, affiche le déroulé, et renvoie le vainqueur.
-4. Organisez un mini-tournoi à 4 participants (demi-finales + finale). Qui gagne le plus souvent ? La poule surprend souvent ! 🐔🏆
-
-##### 🦸 Exercice 2.C — Les super-pouvoirs en kit
-
-1. Créez les traits `Vole` (méthode `voler()`), `CracheDuFeu` (méthode `cracherDuFeu()`) et `Invisible` (méthode `disparaitre()`), chacun affichant un message rigolo.
-2. Créez `Dragon` (vole + crache du feu), `Fantome` (vole + invisible) et `Politicien` (invisible uniquement, surtout après les élections).
-3. Question à méditer et à justifier en commentaire : pourquoi des traits plutôt qu'un héritage `Dragon extends Volant` ?
-
-##### 🧮 Exercice 2.D — Le compteur de population (statique)
-
-Reprenez votre `Tamagotchi` (exercice 1.A) et ajoutez :
-
-- une propriété **statique** `$population` incrémentée à chaque naissance (constructeur) ;
-- une méthode statique `recensement(): string` qui affiche `🌍 Population mondiale de Tamagotchis : 42` ;
-- une constante de classe typée `final const int SEUIL_SURPOPULATION = 10;` — au-delà, `recensement()` ajoute un avertissement dramatique.
-
-> 🎮 **La suite du chapitre 2** : [le contrôle à l'entrée du zoo, la dynastie royale et le quiz « compilera, compilera pas ? »](./exercices/chapitre-02.md)
+```text
+Rex fait : Wouf !
+Félix fait : Miaou !
+Coco fait : À l'abordage ! Croâ ! À l'abordage !
+```
 
 ---
 
@@ -1623,26 +1568,27 @@ echo Statut::Brouillon->libelle(); // 📝 En cours de rédaction
 
 ---
 
-#### 3.4. Exercice ludique — Pierre, Feuille, Ciseaux
+#### 3.4. Exercices
 
-Créez le jeu **Pierre-Feuille-Ciseaux** ✊✋✌️ :
+🎮 **[Les exercices du chapitre 3](./exercices/chapitre-03.md)** — on ajoute des méthodes à un enum `Feu` (🔴 🟠 🟢), puis on écrit **Pierre-Feuille-Ciseaux** :
 
-1. Un enum adossé `Coup: string` avec les cas `Pierre`, `Feuille`, `Ciseaux`.
-2. Une méthode `bat(Coup $autre): bool` dans l'enum, écrite avec un `match` (la pierre bat les ciseaux, les ciseaux battent la feuille, la feuille bat la pierre).
-3. Une méthode `emoji(): string` (match again !).
-4. Une méthode statique `aleatoire(): self` pour le coup de l'ordinateur (piochez dans `self::cases()`).
-5. Une classe `Partie` qui fait s'affronter le joueur (coup passé en paramètre ou lu au hasard) et l'ordinateur en 5 manches, affiche chaque manche et le score final :
+```php
+enum Coup: string
+{
+    case Pierre = 'pierre';
+    case Feuille = 'feuille';
+    case Ciseaux = 'ciseaux';
 
-```text
-Manche 1 : Vous ✊ vs 🤖 ✌️ → vous gagnez !
-Manche 2 : Vous ✋ vs 🤖 ✋ → égalité…
-...
-🏆 Score final : Vous 3 — 1 Ordinateur. GG !
+    public function bat(Coup $autre): bool
+    {
+        return match ($this) {
+            Coup::Pierre  => $autre === Coup::Ciseaux,
+            Coup::Feuille => $autre === Coup::Pierre,
+            Coup::Ciseaux => $autre === Coup::Feuille,
+        };
+    }
+}
 ```
-
-Bonus : ajoutez `Lezard` et `Spock` (version *Big Bang Theory* 🖖) — vous mesurerez à quel point l'enum + `match` rend l'extension facile.
-
-> 🎮 **La suite du chapitre 3** : [le feu de signalisation, le menu de la cantine et la chasse aux chaînes magiques](./exercices/chapitre-03.md)
 
 ---
 
@@ -1709,7 +1655,7 @@ namespace App\Model;
 throw new \Exception('Oups'); // sans le \, PHP chercherait App\Model\Exception !
 ```
 
-> 🎮 **Exercices du chapitre 4** : [les deux guildes, le piège de l'Exception et le cartographe de projet](./exercices/chapitre-04.md)
+> 🎮 **[Exercices du chapitre 4](./exercices/chapitre-04.md)** : deux classes qui portent le même nom, `use`, `as`, et le piège de `\Exception`.
 
 ---
 
@@ -1784,7 +1730,7 @@ projet/
 
 > 💡 **Dans la vraie vie** : les projets professionnels utilisent [Composer](https://getcomposer.org/), qui génère l'autoloader PSR-4 pour vous (`composer dump-autoload`, puis `require 'vendor/autoload.php';`). Comprendre `spl_autoload_register()` vous permet de comprendre ce que Composer fait sous le capot.
 
-> 🎮 **Exercices du chapitre 5** : [le grimoire auto-magique, l'espion de l'autoloader et un aperçu sous le capot de Composer](./exercices/chapitre-05.md)
+> 🎮 **[Exercices du chapitre 5](./exercices/chapitre-05.md)** : supprimer tous les `require` d'un projet, sauf un.
 
 ---
 
@@ -1888,27 +1834,19 @@ L'intérêt d'une classe dédiée : l'appelant peut réagir **différemment selo
 
 ---
 
-#### 6.1. Exercice ludique — La machine à café
+#### 6.1. Exercices
 
-Modélisez la machine à café ☕ de la salle de pause :
+🎮 **[Les exercices du chapitre 6](./exercices/chapitre-06.md)** — de la division par zéro à la machine à café ☕, en passant par vos propres classes d'exception.
 
-1. Créez trois exceptions personnalisées : `PlusDeCafeException`, `PlusDeGobeletException`, `MontantInsuffisantException` (cette dernière reçoit le montant manquant et l'inclut dans son message).
-2. Créez la classe `MachineACafe` :
-    - propriétés privées : `$doses` (10 au départ), `$gobelets` (5 au départ), `$prix` (constante, 0.50) ;
-    - méthode `commander(float $montantInsere): string` qui vérifie tout dans l'ordre (argent, gobelets, café), lance la bonne exception, ou décrémente les stocks et renvoie `"☕ Voici votre café ! (monnaie rendue : 0.50 €)"`.
-3. Écrivez un scénario de test : une file de 7 collègues (tableau de montants insérés, certains radins) commande à la suite, dans un `try...catch` par commande — la machine ne doit **jamais** faire planter le script, chaque déception s'affiche poliment :
+L'exercice principal : une `MachineACafe` avec 3 gobelets qui lance une exception quand le stock est vide. Cinq clients se présentent, et le programme **ne plante jamais**.
 
 ```text
-Client 1 : ☕ Voici votre café ! (monnaie rendue : 0.50 €)
-Client 2 : 💸 Il manque 0.30 € !
+Client 1 : ☕ Voici votre café !
+Client 2 : ☕ Voici votre café !
 Client 3 : ☕ Voici votre café !
-...
-Client 7 : 😱 Plus de gobelets ! Revenez demain.
+Client 4 : 😱 Plus de gobelets !
+Client 5 : 😱 Plus de gobelets !
 ```
-
-Bonus : un bloc `finally` affiche l'état des stocks après chaque commande.
-
-> 🎮 **La suite du chapitre 6** : [le videur de la boîte de nuit, la fusée à étages et le quiz « qui attrape quoi ? »](./exercices/chapitre-06.md)
 
 ---
 
@@ -1990,7 +1928,7 @@ $resultat = ' Bonjour le monde '
 // équivalent à str_split(strtoupper(trim(' Bonjour le monde ')))
 ```
 
-> 🎮 **Exercices du chapitre 7** : [le Choixpeau magique, la chaîne de fabrication, le GPS prudent et l'usine à arguments nommés](./exercices/chapitre-07.md)
+> 🎮 **[Exercices du chapitre 7](./exercices/chapitre-07.md)** : réécrire un `switch` en `match`, les intervalles avec `match(true)`, `?->` et les arguments nommés.
 
 ---
 
@@ -2171,7 +2109,7 @@ echo $user->getName(); // Aline
 
 > 💡 C'est le principe de base de tous les **ORM** (Doctrine, Eloquent…) : transformer automatiquement des lignes SQL en objets, et inversement.
 
-> 🎮 **Exercices du chapitre 8** : [la bibliothèque interdite, le traducteur snake_case et le paquet de cartes](./exercices/chapitre-08.md)
+> 🎮 **[Exercices du chapitre 8](./exercices/chapitre-08.md)** : transformer une ligne PDO en objet, puis automatiser avec l'hydratation.
 
 ---
 
@@ -2292,36 +2230,16 @@ try {
 
 ---
 
-#### 9.1. Exercice ludique — Le Gardien de Créatures
+#### 9.1. Exercices
 
-Vous êtes engagé·e comme gardien·ne d'un refuge pour créatures fantastiques. 🐉
+🎮 **[Les exercices du chapitre 9](./exercices/chapitre-09.md)** — vous construisez votre `UserManager` méthode par méthode : `getAll()`, `getById()`, `add()`, `update()`, `delete()`. Un CRUD complet, sur SQLite pour éviter d'installer quoi que ce soit.
 
-1. Créez la table :
+Le dernier exercice fait exécuter une vraie injection SQL, pour voir de ses propres yeux ce que la requête préparée empêche :
 
-```sql
-CREATE TABLE creature (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    espece VARCHAR(50) NOT NULL,     -- 'dragon', 'licorne', 'gobelin', 'phenix'
-    niveau_danger INT NOT NULL DEFAULT 1,  -- de 1 à 5
-    est_endormie TINYINT(1) NOT NULL DEFAULT 0
-);
+```text
+Requête PRÉPARÉE   : 0 résultat(s) ✅
+Requête CONCATÉNÉE : 2 résultat(s) 💥   ← toute la table !
 ```
-
-2. Créez un **enum adossé** `Espece: string` avec un `emoji(): string` et un `cri(): string` (match !).
-3. Créez la classe `Creature extends AbstractModel` : propriétés, getters, setters — le setter d'espèce convertit la chaîne SQL en enum avec `Espece::from()`, le setter de niveau de danger le borne entre 1 et 5.
-4. Créez le `CreatureManager` complet : `getCreature`, `getCreatures`, `addCreature`, `updateCreature`, `deleteCreature`, plus deux méthodes bonus :
-    - `getCreaturesDangereuses(): array` (niveau ≥ 4) ;
-    - `berceuse(int $id): void` qui passe `est_endormie` à 1 (UPDATE ciblé).
-5. Scénario à jouer dans un script `refuge.php` :
-    - peupler le refuge avec 5 créatures ;
-    - afficher le registre : `🐉 Fumerolle (dragon) — danger 5/5 — 😴 endormie` ;
-    - endormir toutes les créatures dangereuses avec `berceuse()` ;
-    - un gobelin s'échappe (DELETE) — affichez un avis de recherche ! 
-
-Bonus : ajoutez `getStatistiques(): array` qui renvoie le nombre de créatures par espèce (GROUP BY) et affichez un rapport digne d'un ministère de la magie.
-
-> 🎮 **La suite du chapitre 9** : [les records de la borne d'arcade, la transaction du marchand et le manager générique](./exercices/chapitre-09.md) — avec une astuce SQLite pour travailler sans installer MySQL.
 
 ---
 
@@ -2400,7 +2318,7 @@ CREATE TABLE hero (
 | Manager PDO : requêtes préparées, CRUD, classement | /4 |
 | **Le fun du déroulé des combats** 🎭 | **/(bonus infini)** |
 
-> 🎮 **Pour aller plus loin** : [six quêtes annexes pour enrichir l'Arène, deux projets alternatifs (le Gestionnaire de Potions, la Médiathèque) et la checklist de rendu](./exercices/chapitre-10.md)
+> 🎮 **[Le projet final, découpé en 6 étapes](./exercices/chapitre-10.md)** — avec une grille d'auto-évaluation et des pistes d'amélioration.
 
 ---
 
