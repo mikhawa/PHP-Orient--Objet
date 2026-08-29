@@ -169,11 +169,11 @@ echo $calc->diviser(10, 0);
 ## 🚀 Pour aller plus loin
 
 <details>
-<summary><b>Bonus — Les corrigés détaillés</b></summary>
+<summary><b>Bonus — Les exercices détaillés</b></summary>
 
-- **Les deux guildes**, version complète avec constantes de namespace — [`solutions/chapitre-04/guildes/`](../solutions/chapitre-04/guildes/)
-- **Le piège de l'Exception**, avec les deux façons de le corriger — [`04b-piege-exception.php`](../solutions/chapitre-04/04b-piege-exception.php)
-- **Organiser un projet** en namespaces, en préparation du chapitre 5 — [`04c-cartographe-corrige.md`](../solutions/chapitre-04/04c-cartographe-corrige.md)
+- **Les deux guildes**, version complète avec constantes de namespace
+- **Le piège de l'Exception**, avec les deux façons de le corriger
+- **Organiser un projet** en namespaces, en préparation du chapitre 5
 
 </details>
 

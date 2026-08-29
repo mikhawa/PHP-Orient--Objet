@@ -47,12 +47,9 @@ Ressources officielles et tutoriels complémentaires :
 
 Chaque chapitre a sa série d'exercices dans le dossier **[exercices/](./exercices/)** — Tamagotchi, tournoi de super-héros, machine à café, borne d'arcade et bien d'autres. Les plus emblématiques sont repris directement dans le cours, aux endroits marqués 🎮.
 
-Les **corrigés** se trouvent dans **[solutions/](./solutions/)** : un fichier PHP exécutable par exercice, testé sous PHP 8.4. Les chapitres 9 et 10 utilisent SQLite en mémoire — aucun serveur à installer.
-
 ## Menu de navigation
 - [code](./)
 - [🎮 Exercices par chapitre](./exercices/)
-- [✅ Corrigés des exercices](./solutions/)
 - [Introduction](#php-8-orienté-objet)
     - [0. Du procédural à l'objet](#0-du-procédural-à-lobjet)
         - [🎮 Exercices du chapitre 0](./exercices/chapitre-00.md)

@@ -243,12 +243,12 @@ echo count($resultats) . ' résultats' . PHP_EOL;
 ## 🚀 Pour aller plus loin
 
 <details>
-<summary><b>Bonus — Les corrigés détaillés</b></summary>
+<summary><b>Bonus — Les exercices détaillés</b></summary>
 
-- **Le Gardien de Créatures** : CRUD complet avec enum, `GROUP BY`, scénario complet — [`09a-gardien-de-creatures.php`](../solutions/chapitre-09/09a-gardien-de-creatures.php)
-- **La borne d'arcade** : `LIMIT` paramétré, injection SQL démontrée, statistiques — [`09b-borne-arcade.php`](../solutions/chapitre-09/09b-borne-arcade.php)
-- **La transaction du marchand** : `beginTransaction`, `commit`, `rollBack` — [`09c-transaction-marchand.php`](../solutions/chapitre-09/09c-transaction-marchand.php)
-- **Le manager générique** : factoriser le CRUD dans une classe abstraite — [`09d-manager-generique.php`](../solutions/chapitre-09/09d-manager-generique.php)
+- **Le Gardien de Créatures** : CRUD complet avec enum, `GROUP BY`, scénario complet
+- **La borne d'arcade** : `LIMIT` paramétré, injection SQL démontrée, statistiques
+- **La transaction du marchand** : `beginTransaction`, `commit`, `rollBack`
+- **Le manager générique** : factoriser le CRUD dans une classe abstraite
 
 </details>
 

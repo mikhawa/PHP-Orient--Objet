@@ -235,20 +235,6 @@ Merlin attaque (28 dégâts)
 
 </details>
 
-<details>
-<summary><b>Le corrigé complet</b></summary>
-
-Un projet complet et fonctionnel, structuré en namespaces avec autoload :
-[`solutions/chapitre-10/arene/`](../solutions/chapitre-10/arene/)
-
-```bash
-cd solutions/chapitre-10/arene && php public/index.php
-```
-
-⚠️ Il va **plus loin** que ce qui est demandé ici (namespaces, autoloader, transaction, visibilité asymétrique). Regardez-le après avoir fait le vôtre, pour comparer.
-
-</details>
-
 ---
 
 [⬅️ Retour à l'index des exercices](./README.md)

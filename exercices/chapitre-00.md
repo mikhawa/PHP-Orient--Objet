@@ -125,8 +125,6 @@ Créez une classe `Playlist` avec :
 
 Puis affichez la durée totale au format `mm:ss` (indice : `intdiv($total, 60)` et `$total % 60`).
 
-Corrigé : [`solutions/chapitre-00/00a-playlist.php`](../solutions/chapitre-00/00a-playlist.php)
-
 </details>
 
 ---

@@ -259,8 +259,6 @@ Une **interface** est un contrat : elle liste des méthodes qu'une classe s'enga
 
 Créez `interface Combattant` avec `attaquer()`, `recevoirDegats()` et `estVivant()`, puis trois classes très différentes qui l'implémentent (Chevalier, Magicien, Poule). Écrivez une fonction `duel(Combattant $a, Combattant $b)` qui les fait combattre — elle marchera avec n'importe quelle classe respectant le contrat.
 
-Corrigé : [`02b-tournoi.php`](../solutions/chapitre-02/02b-tournoi.php)
-
 </details>
 
 <details>
@@ -268,17 +266,15 @@ Corrigé : [`02b-tournoi.php`](../solutions/chapitre-02/02b-tournoi.php)
 
 Une classe n'a qu'un seul parent, mais peut utiliser autant de **traits** qu'elle veut. Créez `Vole`, `CracheDuFeu`, `Invisible`, puis `Dragon` (vole + crache), `Fantome` (vole + invisible).
 
-Corrigé : [`02c-traits.php`](../solutions/chapitre-02/02c-traits.php)
-
 </details>
 
 <details>
 <summary><b>Bonus 3 — Les autres exercices avancés</b></summary>
 
-- **Le contrôle au zoo** : deux interfaces sur une même classe, `instanceof` — [`02e-zoo.php`](../solutions/chapitre-02/02e-zoo.php)
-- **La dynastie royale** : chaîne de `parent::`, et le piège de la récursion infinie — [`02f-dynastie.php`](../solutions/chapitre-02/02f-dynastie.php)
-- **Le compteur de population** : propriétés et méthodes statiques — [`02d-recensement.php`](../solutions/chapitre-02/02d-recensement.php)
-- **Quiz** « compilera, compilera pas ? » — [`02g-quiz.php`](../solutions/chapitre-02/02g-quiz.php)
+- **Le contrôle au zoo** : deux interfaces sur une même classe, `instanceof`
+- **La dynastie royale** : chaîne de `parent::`, et le piège de la récursion infinie
+- **Le compteur de population** : propriétés et méthodes statiques
+- **Quiz** « compilera, compilera pas ? »
 
 </details>
 

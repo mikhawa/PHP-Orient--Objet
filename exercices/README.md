@@ -28,14 +28,6 @@ Niveaux : ⭐ à faire par tout le monde · ⭐⭐ un peu plus exigeant
 | 9. Managers | [chapitre-09.md](./chapitre-09.md) | Ranger ses requêtes dans une classe, CRUD complet, injection SQL |
 | 10. Projet final | [chapitre-10.md](./chapitre-10.md) | L'Arène des Héros, en 6 étapes |
 
-## Les corrigés
-
-Chaque exercice a son **corrigé exécutable** dans [`solutions/`](../solutions/) — un fichier PHP qui tourne tel quel et affiche sa propre démonstration.
-
-Les corrigés `XX-etapes-*.php` correspondent aux exercices numérotés de chaque chapitre ; les autres fichiers sont les corrigés des exercices « Pour aller plus loin ».
-
-⚠️ **Cherchez d'abord.** Un corrigé lu avant d'avoir essayé ne vous apprend rien : votre cerveau reconnaît la solution sans savoir la produire. C'est en cherchant que ça rentre.
-
 ## Conseils de travail
 
 - Un dossier par chapitre (`ex00/`, `ex01/`…), et lancez avec `php mon-fichier.php`.

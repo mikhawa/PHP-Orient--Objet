@@ -161,11 +161,11 @@ grimoire/
 ## 🚀 Pour aller plus loin
 
 <details>
-<summary><b>Bonus — Les corrigés détaillés</b></summary>
+<summary><b>Bonus — Les exercices détaillés</b></summary>
 
-- **Le grimoire complet**, avec `App/Model/` et `App/Service/` — [`solutions/chapitre-05/grimoire/`](../solutions/chapitre-05/grimoire/)
-- **L'espion de l'autoloader**, qui prouve le chargement paresseux — [`05b-espion.php`](../solutions/chapitre-05/05b-espion.php)
-- **Sous le capot de Composer** : à quoi ressemble `vendor/autoload.php` — [`05c-composer-corrige.md`](../solutions/chapitre-05/05c-composer-corrige.md)
+- **Le grimoire complet**, avec `App/Model/` et `App/Service/`
+- **L'espion de l'autoloader**, qui prouve le chargement paresseux
+- **Sous le capot de Composer** : à quoi ressemble `vendor/autoload.php`
 
 </details>
 

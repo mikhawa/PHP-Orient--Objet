@@ -175,16 +175,14 @@ class MontantInsuffisantException extends Exception
 
 Créez `RefusEntreeException`, puis trois enfants : `TropJeuneException`, `TenueNonReglementaireException`, `ListeNoireException`. Un **seul** `catch (RefusEntreeException $e)` les attrape toutes les trois.
 
-Corrigé : [`06b-videur.php`](../solutions/chapitre-06/06b-videur.php)
-
 </details>
 
 <details>
 <summary><b>Bonus 2 — Les autres exercices</b></summary>
 
-- **La machine à café complète** : trois exceptions, `finally`, gestion des stocks — [`06a-machine-a-cafe.php`](../solutions/chapitre-06/06a-machine-a-cafe.php)
-- **La fusée à étages** : attraper une exception et la relancer avec `previous` — [`06c-fusee.php`](../solutions/chapitre-06/06c-fusee.php)
-- **Quiz** « qui attrape quoi ? » — [`06d-quiz.php`](../solutions/chapitre-06/06d-quiz.php)
+- **La machine à café complète** : trois exceptions, `finally`, gestion des stocks
+- **La fusée à étages** : attraper une exception et la relancer avec `previous`
+- **Quiz** « qui attrape quoi ? »
 
 </details>
 

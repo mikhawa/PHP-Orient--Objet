@@ -203,11 +203,11 @@ echo $user->getName() . PHP_EOL;
 ## 🚀 Pour aller plus loin
 
 <details>
-<summary><b>Bonus — Les corrigés détaillés</b></summary>
+<summary><b>Bonus — Les exercices détaillés</b></summary>
 
-- **La bibliothèque interdite** : setters qui valident, données SQL sales, `strip_tags` ≠ anti-XSS — [`08a-bibliotheque-interdite.php`](../solutions/chapitre-08/08a-bibliotheque-interdite.php)
-- **Le traducteur `snake_case`** : gérer `annee_publication` → `setAnneePublication`, et le chemin inverse — [`08b-hydratation.php`](../solutions/chapitre-08/08b-hydratation.php)
-- **Le paquet de cartes** : combiner enums et objets — [`08c-paquet-de-cartes.php`](../solutions/chapitre-08/08c-paquet-de-cartes.php)
+- **La bibliothèque interdite** : setters qui valident, données SQL sales, `strip_tags` ≠ anti-XSS
+- **Le traducteur `snake_case`** : gérer `annee_publication` → `setAnneePublication`, et le chemin inverse
+- **Le paquet de cartes** : combiner enums et objets
 
 </details>
 

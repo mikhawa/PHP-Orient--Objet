@@ -299,11 +299,11 @@ PHP appelle `__toString()` automatiquement dès qu'on utilise l'objet comme une 
 
 Ces exercices supposent le chapitre 1 bien digéré :
 
-- **Le dé parlant** : fabriques statiques et `random_int()` — corrigé : [`01d-de-parlant.php`](../solutions/chapitre-01/01d-de-parlant.php)
-- **La fabrique de super-héros** : arguments nommés et `readonly` — corrigé : [`01b-super-heros.php`](../solutions/chapitre-01/01b-super-heros.php)
-- **Le coffre-fort** : trois essais puis blocage définitif — corrigé : [`01c-coffre-fort.php`](../solutions/chapitre-01/01c-coffre-fort.php)
-- **La jauge magique** : property hooks de PHP 8.4 — corrigé : [`01e-jauge.php`](../solutions/chapitre-01/01e-jauge.php)
-- **Le quiz** « que va afficher ce code ? » — corrigé : [`01f-quiz.php`](../solutions/chapitre-01/01f-quiz.php)
+- **Le dé parlant** : fabriques statiques et `random_int()`
+- **La fabrique de super-héros** : arguments nommés et `readonly`
+- **Le coffre-fort** : trois essais puis blocage définitif
+- **La jauge magique** : property hooks de PHP 8.4
+- **Le quiz** « que va afficher ce code ? »
 
 </details>
 

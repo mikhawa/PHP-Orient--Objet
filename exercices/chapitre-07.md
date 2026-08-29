@@ -196,12 +196,12 @@ $p = new Pizza(ananas: true);
 ## 🚀 Pour aller plus loin
 
 <details>
-<summary><b>Bonus — Les corrigés détaillés</b></summary>
+<summary><b>Bonus — Les exercices détaillés</b></summary>
 
-- **Le Choixpeau magique** : `match(true)`, `switch` vs `match`, `UnhandledMatchError` — [`07a-choixpeau.php`](../solutions/chapitre-07/07a-choixpeau.php)
-- **Le GPS prudent** : `?->` en profondeur, Warning ≠ Error — [`07c-gps.php`](../solutions/chapitre-07/07c-gps.php)
-- **L'usine à gâteaux** : arguments nommés, `new` dans un initialiseur — [`07d-gateau.php`](../solutions/chapitre-07/07d-gateau.php)
-- **La chaîne de fabrication** (difficile) : callables de première classe — [`07b-pipeline.php`](../solutions/chapitre-07/07b-pipeline.php)
+- **Le Choixpeau magique** : `match(true)`, `switch` vs `match`, `UnhandledMatchError`
+- **Le GPS prudent** : `?->` en profondeur, Warning ≠ Error
+- **L'usine à gâteaux** : arguments nommés, `new` dans un initialiseur
+- **La chaîne de fabrication** (difficile) : callables de première classe
 
 </details>
 

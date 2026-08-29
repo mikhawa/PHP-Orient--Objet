@@ -192,16 +192,14 @@ var_dump(Coup::Pierre->bat(Coup::Feuille));   // false
 
 Ajoutez une méthode statique `aleatoire(): self` (indice : `self::cases()` + `array_rand()`), puis une classe `Partie` qui fait s'affronter le joueur et l'ordinateur en 5 manches, avec le score final.
 
-Corrigé : [`03a-pierre-feuille-ciseaux.php`](../solutions/chapitre-03/03a-pierre-feuille-ciseaux.php)
-
 </details>
 
 <details>
 <summary><b>Bonus 2 — Les autres exercices</b></summary>
 
-- **Le menu de la cantine** : enum sur `int`, lecture d'un argument en ligne de commande — [`03c-cantine.php`](../solutions/chapitre-03/03c-cantine.php)
-- **Avant / après** : pourquoi un enum vaut mieux que des chaînes de caractères — [`03d-chaines-magiques.php`](../solutions/chapitre-03/03d-chaines-magiques.php)
-- **Le feu complet** : `suivant()`, simulation de deux cycles — [`03b-feu-signalisation.php`](../solutions/chapitre-03/03b-feu-signalisation.php)
+- **Le menu de la cantine** : enum sur `int`, lecture d'un argument en ligne de commande
+- **Avant / après** : pourquoi un enum vaut mieux que des chaînes de caractères
+- **Le feu complet** : `suivant()`, simulation de deux cycles
 
 </details>
 
