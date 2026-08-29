@@ -225,13 +225,73 @@ Merlin attaque (28 dégâts)
 ## 🚀 Pour aller plus loin
 
 <details>
-<summary><b>Améliorations possibles</b></summary>
+<summary><b>Amélioration 1 — Les armes</b> (enum + colonne SQL)</summary>
 
-- **Les armes** : un enum `TypeArme` avec un bonus de dégâts, et une colonne `arme` en base.
-- **Le journal de combat** : un trait `Journalisable` (méthodes `noter()` et `afficherJournal()`), utilisé par l'Arène **et** par le manager.
-- **Les exceptions** : `HeroMortException` si on fait attaquer un héros déjà mort.
-- **La transaction** : victoire et défaite enregistrées ensemble ou pas du tout (`beginTransaction` / `commit` / `rollBack`).
-- **L'interface web** : un formulaire pour créer son héros, une page classement. Aucun changement dans vos classes — c'est la preuve que votre architecture est bonne. 🏗️
+Chaque héros porte une arme qui modifie ses dégâts.
+
+- Créez un `enum TypeArme: string` (`Epee = 'epee'`, `Hache = 'hache'`, `Dague = 'dague'`, `Baton = 'baton'`) avec une méthode `bonusDegats(): int` (par ex. épée +3, hache +6 mais…, dague +1, bâton +0) et `emoji(): string`.
+- Ajoutez une colonne `arme VARCHAR(20)` à la table `hero`, une propriété `TypeArme $arme` au modèle, son getter/setter (le setter convertit la chaîne SQL en enum : `TypeArme::tryFrom(...) ?? ...`).
+- Dans `attaquer()`, ajoutez `$this->arme->bonusDegats()` aux dégâts de base.
+- Adaptez l'`INSERT`/`UPDATE` du manager (`->getArme()->value`) et l'hydratation.
+
+**Test** : deux héros identiques, l'un avec une hache, l'autre avec une dague → celui à la hache doit gagner nettement plus souvent.
+
+</details>
+
+<details>
+<summary><b>Amélioration 2 — Le journal de combat</b> (un trait partagé)</summary>
+
+- Créez un `trait Journalisable` avec une propriété privée `array $journal = []` et deux méthodes : `noter(string $ligne): void` (ajoute au journal, horodaté avec `date('H:i:s')`) et `afficherJournal(): string` (renvoie tout le journal, une ligne par entrée).
+- Faites `use Journalisable;` **à la fois** dans le service `Arene` **et** dans le `HeroManager` — deux classes sans lien de parenté qui partagent le même comportement (c'est tout l'intérêt d'un trait).
+- Dans `Arene::combat()`, appelez `$this->noter("...")` à chaque tour ; dans `HeroManager::enregistrerResultat()`, notez chaque écriture en base.
+- À la fin du programme, affichez les deux journaux côte à côte.
+
+</details>
+
+<details>
+<summary><b>Amélioration 3 — Les exceptions métier</b></summary>
+
+- Créez `App\Exception\HeroMortException extends \RuntimeException`, avec un constructeur `public function __construct(public readonly string $nomDuHero)` qui compose le message `"💀 Aria est déjà tombé au combat."`.
+- Dans `Hero::attaquer()` (ou `recevoirDegats()`), levez-la si `$this->pv <= 0` : un héros mort ne peut plus frapper.
+- Dans `Arene::combat()`, entourez la boucle de combat d'un `try/catch (HeroMortException $e)` qui termine proprement la manche.
+- Créez aussi `ArenaVideException` levée si on tente de faire combattre un héros contre lui-même (`if ($a === $b)`).
+
+</details>
+
+<details>
+<summary><b>Amélioration 4 — La transaction</b> (victoire + défaite : tout ou rien)</summary>
+
+Enregistrer un résultat = **deux** `UPDATE` : `+1 victoire` pour l'un, `+1 défaite` pour l'autre. Ils doivent réussir ensemble.
+
+```php
+public function enregistrerResultat(Hero $vainqueur, Hero $perdant): void
+{
+    $this->pdo->beginTransaction();
+    try {
+        $this->incrementer($vainqueur->getId(), 'victoires');
+        $this->incrementer($perdant->getId(), 'defaites');
+        $this->pdo->commit();
+    } catch (\Throwable $e) {
+        $this->pdo->rollBack();
+        throw $e;
+    }
+}
+```
+
+**Test** : passez un `getId()` invalide pour le perdant → après le `rollBack`, le vainqueur ne doit **pas** avoir gagné sa victoire non plus.
+
+</details>
+
+<details>
+<summary><b>Amélioration 5 — L'interface web</b></summary>
+
+Sans toucher à vos classes `Hero`, `HeroManager`, `Arene` :
+
+- une page `public/creer.php` : un `<form method="post">` avec le nom et un `<select>` de classes (généré depuis `ClasseHero::cases()`), qui appelle `$manager->add(new Guerrier([...]))` puis redirige ;
+- une page `public/classement.php` : un `<table>` HTML alimenté par `$manager->getClassement()`, chaque valeur **échappée** avec `htmlspecialchars(...)` ;
+- un `public/index.php` qui lance un tournoi et affiche le résultat.
+
+Si tout fonctionne sans modifier une seule ligne de vos modèles/managers, c'est la preuve que la séparation « logique métier / affichage » est réussie. 🏗️
 
 </details>
 
