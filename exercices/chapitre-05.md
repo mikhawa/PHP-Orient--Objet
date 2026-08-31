@@ -161,11 +161,139 @@ grimoire/
 ## 🚀 Pour aller plus loin
 
 <details>
-<summary><b>Bonus — Les corrigés détaillés</b></summary>
+<summary><b>Bonus 1 — Le grimoire complet</b> (namespaces à plusieurs niveaux, un seul <code>require</code>)</summary>
 
-- **Le grimoire complet**, avec `App/Model/` et `App/Service/` — [`solutions/chapitre-05/grimoire/`](../solutions/chapitre-05/grimoire/)
-- **L'espion de l'autoloader**, qui prouve le chargement paresseux — [`05b-espion.php`](../solutions/chapitre-05/05b-espion.php)
-- **Sous le capot de Composer** : à quoi ressemble `vendor/autoload.php` — [`05c-composer-corrige.md`](../solutions/chapitre-05/05c-composer-corrige.md)
+On passe de deux classes à trois, réparties sur **deux sous-namespaces**.
+
+**Arborescence :**
+
+```text
+grimoire/
+├── autoload.php
+├── public/
+│   └── index.php                        (pas de namespace)
+└── App/
+    ├── Model/
+    │   ├── Sort.php        → App\Model\Sort
+    │   └── Grimoire.php    → App\Model\Grimoire
+    └── Service/
+        └── Incantation.php → App\Service\Incantation
+```
+
+**Les classes :**
+
+- `App\Model\Sort` : `public function __construct(public readonly string $nom, public readonly int $mana) {}` ;
+- `App\Model\Grimoire` : une propriété privée `array $sorts = []`, et les méthodes `ajouter(Sort $sort): void`, `nombreDeSorts(): int`, `getSorts(): array` ;
+- `App\Service\Incantation` : doit manipuler un `Sort`, qui vit dans un **autre** namespace → il faut donc `use App\Model\Sort;` en haut du fichier. Méthode `lancer(Sort $sort): string` qui renvoie `"🪄 Abracadabra ! Boule de feu lancé pour 30 mana."`.
+
+**`autoload.php` :** un `spl_autoload_register()` qui construit un chemin **absolu** (avec `__DIR__`, jamais relatif) :
+
+```php
+$chemin = __DIR__ . '/' . str_replace('\\', '/', $class) . '.php';
+if (file_exists($chemin)) {           // on teste AVANT d'inclure
+    require_once $chemin;
+}
+```
+
+**`public/index.php` :** un seul `require __DIR__ . '/../autoload.php';`, puis les trois `use`, puis on remplit un grimoire de 3 sorts et on les lance tous dans une boucle. Objectif : **zéro `require`** en dehors de l'autoloader.
+
+</details>
+
+<details>
+<summary><b>Bonus 2 — L'espion de l'autoloader</b> (prouver le chargement paresseux)</summary>
+
+But : constater de ses yeux qu'une classe n'est chargée **qu'au moment exact** où PHP en a besoin.
+
+**1. Un autoloader mouchard** — comme celui du bonus 1, mais avec une trace :
+
+```php
+spl_autoload_register(function (string $class): void {
+    $chemin = __DIR__ . '/grimoire/' . str_replace('\\', '/', $class) . '.php';
+    if (file_exists($chemin)) {
+        echo "🔎 Chargement de $class..." . PHP_EOL;   // le mouchard
+        require_once $chemin;
+    }
+});
+```
+
+**2. Un scénario piégé :**
+
+```php
+echo "-- début --" . PHP_EOL;
+$grimoire = new App\Model\Grimoire();
+echo "-- grimoire créé --" . PHP_EOL;
+
+if (false) {                                  // jamais exécuté
+    $jamais = new App\Service\Incantation();
+}
+echo "-- fin --" . PHP_EOL;
+```
+
+**3. Les questions :**
+
+- Combien de lignes `🔎` apparaissent ? Lesquelles ? (Réponse : une seule, pour `Grimoire`.)
+- `App\Service\Incantation` a-t-elle été chargée ? Vérifiez avec `class_exists('App\Service\Incantation', autoload: false)`.
+- Pourquoi `App\Model\Sort` n'apparaît pas non plus ?
+- Mentionnez `Incantation` **après** le `echo "-- fin --"` : le `🔎` apparaît maintenant. À la demande, pas une milliseconde avant.
+
+**Pourquoi c'est important** : un projet Symfony/Laravel a des milliers de classes dans `vendor/`. Sans autoload paresseux, chaque requête HTTP les inclurait toutes. Avec, une page qui utilise 20 classes en charge 20.
+
+> 🧹 Terminez en retirant le `echo` du mouchard : un autoloader qui affiche quoi que ce soit casse tout site web (impossible d'envoyer un en-tête HTTP après le moindre caractère) et pollue toute sortie JSON/CSV.
+
+</details>
+
+<details>
+<summary><b>Bonus 3 — Sous le capot de Composer</b> (PSR-4, <code>vendor/autoload.php</code>)</summary>
+
+Exercice de lecture : comprendre que Composer ne fait « que » ce que vous avez écrit à la main.
+
+**1. Créez un vrai mini-projet Composer :**
+
+```json
+{
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    }
+}
+```
+
+Cette ligne se lit : « toute classe commençant par `App\` se trouve dans `src/`, au chemin obtenu en remplaçant les `\` par des `/` ». Notez que le **namespace ne change pas** (`App\Model\Sort` reste `App\Model\Sort`) : seul le dossier de base passe de `App/` à `src/`.
+
+Rangez-y vos classes du bonus 1 (`src/Model/Sort.php`, etc.), lancez `composer dump-autoload`, et dans `public/index.php` remplacez votre `require` par :
+
+```php
+require __DIR__ . '/../vendor/autoload.php';
+```
+
+Le reste du code ne bouge pas.
+
+**2. Ouvrez `vendor/composer/autoload_psr4.php`.** Vous y trouverez **votre** mapping, converti en tableau PHP :
+
+```php
+return array(
+    'App\\' => array($baseDir . '/src'),
+);
+```
+
+**3. Ouvrez `vendor/composer/ClassLoader.php`** et retrouvez la fonction `findFile()`. En substance, elle fait :
+
+```php
+foreach ($prefixesPsr4 as $prefix => $dirs) {
+    if (str_starts_with($class, $prefix)) {
+        $reste = substr($class, strlen($prefix));
+        foreach ($dirs as $dir) {
+            $file = $dir . '/' . str_replace('\\', '/', $reste) . '.php';
+            if (file_exists($file)) return $file;
+        }
+    }
+}
+```
+
+… c'est-à-dire exactement votre autoloader du bonus 1, avec un tableau de préfixes en plus.
+
+**4. Rédigez une courte note** : que Composer ajoute en plus (classmap optimisée `--optimize` qui supprime les `file_exists()`, plusieurs préfixes, chargement de fichiers `files`, cache APCu), et les **trois causes** habituelles d'un « autoload qui ne marche pas » : casse du nom de fichier, namespace ≠ dossier, `composer dump-autoload` oublié.
 
 </details>
 

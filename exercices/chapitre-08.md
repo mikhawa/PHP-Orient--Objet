@@ -203,11 +203,137 @@ echo $user->getName() . PHP_EOL;
 ## 🚀 Pour aller plus loin
 
 <details>
-<summary><b>Bonus — Les corrigés détaillés</b></summary>
+<summary><b>Bonus 1 — La bibliothèque interdite</b> (setters validateurs, données SQL sales, <code>strip_tags</code> ≠ anti-XSS)</summary>
 
-- **La bibliothèque interdite** : setters qui valident, données SQL sales, `strip_tags` ≠ anti-XSS — [`08a-bibliotheque-interdite.php`](../solutions/chapitre-08/08a-bibliotheque-interdite.php)
-- **Le traducteur `snake_case`** : gérer `annee_publication` → `setAnneePublication`, et le chemin inverse — [`08b-hydratation.php`](../solutions/chapitre-08/08b-hydratation.php)
-- **Le paquet de cartes** : combiner enums et objets — [`08c-paquet-de-cartes.php`](../solutions/chapitre-08/08c-paquet-de-cartes.php)
+**1. Une classe `Livre`**, miroir d'une table SQL, avec ces propriétés **privées et typées** :
+`?int $id` (null tant que l'INSERT n'a pas eu lieu), `string $titre`, `string $auteur`, `int $anneePublication`, `bool $estInterdit`, `?float $noteMoyenne`.
+
+**2. Le constructeur reçoit tout et passe TOUJOURS par les setters.** Comme les données viennent de SQL (qui renvoie souvent des chaînes), les setters acceptent des types larges :
+
+```php
+public function __construct(
+    ?int $id,
+    string $titre,
+    string $auteur,
+    int $anneePublication,
+    bool|int|string $estInterdit = false,
+    float|int|string|null $noteMoyenne = null,
+) {
+    $this->setId($id);
+    $this->setTitre($titre);
+    // ... etc
+}
+```
+
+**3. Les setters « gardes du corps » :**
+
+| Setter | Règle |
+|--------|-------|
+| `setId` | `null` autorisé ; sinon `>= 1`, sinon `throw new InvalidArgumentException` |
+| `setTitre` | `trim(strip_tags($titre))` ; si vide → exception |
+| `setAuteur` | idem |
+| `setAnneePublication` | entre `1450` (Gutenberg) et l'année courante, sinon exception |
+| `setEstInterdit` | `(bool) (int) $valeur` — normalise `"1"`/`"0"`/`1`/`true` |
+| `setNoteMoyenne` | `null`/`''` → `null` ; sinon **bornée** à `[0, 10]` (on corrige, on ne rejette pas) |
+
+Ajoutez `age(): int`, `estUnClassique(): bool` (> 50 ans) et `__toString()`.
+
+**4. Testez avec 3 lignes « SQL »**, dont une avec `annee_publication => 3025` (doit être **rejetée**) et une avec `'<script>alert("xss")</script>Le Grand Livre` comme titre.
+
+**5. Observez ce que les setters ont corrigé** : `'  Necronomicon  '` → `'Necronomicon'`, `'1'` → `true`, `'9.5'` → `9.5` (float), note `99` → `10.0`.
+
+> 🔐 **Le point crucial à noter en commentaire** : `strip_tags('<script>alert("xss")</script>Titre')` donne `'alert("xss")Titre'` — les balises partent, **le texte reste**. `strip_tags()` **n'est pas** une protection XSS. La vraie protection est **à l'affichage** : `htmlspecialchars($titre, ENT_QUOTES, 'UTF-8')`. Et **rejeter** (exception) vs **corriger** (borner) : donnée aberrante = bug = exception ; donnée imprécise mais exploitable = correction.
+
+</details>
+
+<details>
+<summary><b>Bonus 2 — Le traducteur snake_case → camelCase</b> (l'hydratation décortiquée, le chemin inverse)</summary>
+
+**1. Décortiquez la « ligne magique »** de l'hydratation sur quelques exemples :
+
+```php
+$clef = 'annee_publication';
+ucwords($clef, '_');            // 'Annee_Publication'
+str_replace('_', '', ...);      // 'AnneePublication'
+'set' . ...;                    // 'setAnneePublication'
+```
+
+**2. Une classe abstraite `AbstractModel`**
+
+```php
+abstract class AbstractModel
+{
+    public function __construct(array $tab = [])
+    {
+        $this->hydrate($tab);
+    }
+
+    protected function hydrate(array $assoc): void
+    {
+        foreach ($assoc as $clef => $valeur) {
+            $methode = 'set' . str_replace('_', '', ucwords((string) $clef, '_'));
+            if (method_exists($this, $methode)) {   // ← INDISPENSABLE
+                $this->$methode($valeur);
+            }
+        }
+    }
+}
+```
+
+**3. Une classe `Livre extends AbstractModel`** — **sans constructeur** (celui du parent fait tout), avec ses propriétés privées, ses getters (`getTitre`, `isEstInterdit`…) et ses setters. Hydratez-la avec un tableau qui ressemble à `$stmt->fetch(PDO::FETCH_ASSOC)`.
+
+**4. Le piège de la colonne fantôme** : ajoutez `'colonne_fantome' => 'boo'` et `'created_at' => '2026-01-01'` au tableau. Aucune erreur : `hydrate()` calcule `setColonneFantome()`, ne la trouve pas, passe. **Retirez** le `method_exists()` et constatez le `Error: Call to undefined method`. C'est ce qui rend l'hydratation robuste face à un `ALTER TABLE`.
+
+**5. Le chemin inverse — `toArray(): array`** dans `AbstractModel` : parcourt `get_class_methods($this)`, garde les `get*`/`is*`, retransforme `AnneePublication` → `annee_publication` (indice : `preg_replace('/(?<!^)[A-Z]/', '_$0', $nom)` puis `strtolower`), et renvoie `['titre' => 'Dune', 'annee_publication' => 1965, ...]` — un tableau directement passable à `$stmt->execute()`.
+
+> ⚠️ Les noms de colonnes viennent de **vos getters**, jamais d'une saisie utilisateur — ne construisez jamais une requête ainsi à partir de `$_POST`.
+
+</details>
+
+<details>
+<summary><b>Bonus 3 — Le paquet de cartes</b> (enums + <code>readonly</code>, frontière SQL ↔ objet)</summary>
+
+**1. Deux enums adossés**
+
+```php
+enum Couleur: string {
+    case Pique = 'pique'; case Coeur = 'coeur'; case Carreau = 'carreau'; case Trefle = 'trefle';
+    public function emoji(): string { /* ♠️ ♥️ ♦️ ♣️ */ }
+    public function libelle(): string { /* Pique, Cœur, Carreau, Trèfle */ }
+}
+
+enum Valeur: int {
+    case Deux = 2; /* ... */ case Valet = 11; case Dame = 12; case Roi = 13; case As = 14;
+    public function libelle(): string {
+        // 'Valet'/'Dame'/'Roi'/'As' pour les figures, sinon (string) $this->value
+    }
+}
+```
+
+**2. Une `readonly class Carte`** (PHP 8.2 — une carte est immuable) avec `public Couleur $couleur`, `public Valeur $valeur` et `__toString()` → `"♥️ Dame de Cœur"`.
+
+**3. Une classe `Paquet`** : le constructeur crée les **52 cartes** (`foreach Couleur::cases() as ... foreach Valeur::cases() ...`). Méthodes `melanger()` (`shuffle`), `piocher(): ?Carte` (`array_pop`, `null` si vide), `nombreDeCartesRestantes(): int`.
+
+**4. Une bataille de 10 manches** : à chaque manche, on pioche 2 cartes et on compare `$carteA->valeur->value` vs `$carteB->valeur->value` (l'ordre est encodé dans l'enum, pas besoin de table de correspondance). Score final.
+
+**5. La frontière SQL ↔ enum** : une classe `CartePersistee extends AbstractModel` (celle du bonus 2) dont le **setter fait la conversion** :
+
+```php
+public function setCouleur(Couleur|string $valeur): void
+{
+    if ($valeur instanceof Couleur) { $this->couleur = $valeur; return; }
+
+    $normalisee = strtolower(trim($valeur));                 // blindage : 'PIQUE ' → 'pique'
+    $this->couleur = Couleur::tryFrom($normalisee)
+        ?? throw new InvalidArgumentException("Couleur inconnue : '$valeur'");
+}
+```
+
+Et `toArray()` fait le retour : `'couleur' => $this->couleur->value` (le **scalaire**, pas l'enum — une colonne SQL ne stocke que des scalaires).
+
+Testez avec `['couleur' => 'coeur', 'valeur' => '12']`, puis avec `'PIQUE '` (doit marcher grâce au `trim`+`strtolower`), puis avec `'losange'` (doit lever l'exception).
+
+> 💡 L'idiome PHP 8 à retenir : `Enum::tryFrom($v) ?? throw new ...` — `throw` est une **expression** depuis PHP 8.0, utilisable à droite d'un `??`.
 
 </details>
 

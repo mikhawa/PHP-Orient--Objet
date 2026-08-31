@@ -116,16 +116,36 @@ Si les quatre exercices ci-dessus vous ont paru faciles :
 <details>
 <summary><b>Exercice bonus — La playlist complète</b> (cliquez pour déplier)</summary>
 
-Créez une classe `Playlist` avec :
+On réutilise la classe `Chanson` des exercices précédents (une chanson a un `titre`, un `artiste` et une `duree` en secondes).
 
-- une propriété `public array $chansons = [];`
-- une méthode `ajouter(Chanson $chanson)` qui ajoute une chanson au tableau
-- une méthode `afficher()` qui les affiche toutes avec une boucle `foreach`
-- une méthode `dureeTotale()` qui additionne les durées
+**1. Créez une classe `Playlist`** avec :
 
-Puis affichez la durée totale au format `mm:ss` (indice : `intdiv($total, 60)` et `$total % 60`).
+- une propriété `public array $chansons = [];` ;
+- une méthode `ajouter(Chanson $chanson): void` qui ajoute une chanson au tableau ;
+- une méthode `afficher(): void` qui parcourt le tableau avec un `foreach` et affiche chaque chanson (`titre — artiste (mm:ss)`) ;
+- une méthode `dureeTotale(): int` qui additionne les `duree` de toutes les chansons et renvoie le total en secondes ;
+- une méthode `formaterDuree(int $secondes): string` qui transforme un nombre de secondes en `"mm:ss"`. Indice : `intdiv($secondes, 60)` donne les minutes, `$secondes % 60` les secondes ; complétez à deux chiffres avec `str_pad((string) $s, 2, '0', STR_PAD_LEFT)` ou `sprintf('%02d', $s)`.
 
-Corrigé : [`solutions/chapitre-00/00a-playlist.php`](../solutions/chapitre-00/00a-playlist.php)
+**2. Programme de test :**
+
+```php
+$playlist = new Playlist();
+$playlist->ajouter(new Chanson('Bohemian Rhapsody', 'Queen', 355));
+$playlist->ajouter(new Chanson('Get Lucky', 'Daft Punk', 248));
+$playlist->ajouter(new Chanson('Redbone', 'Childish Gambino', 327));
+
+$playlist->afficher();
+echo 'Durée totale : ' . $playlist->formaterDuree($playlist->dureeTotale()) . PHP_EOL;
+```
+
+**Résultat attendu :**
+
+```text
+Bohemian Rhapsody — Queen (05:55)
+Get Lucky — Daft Punk (04:08)
+Redbone — Childish Gambino (05:27)
+Durée totale : 15:30
+```
 
 </details>
 

@@ -196,12 +196,145 @@ $p = new Pizza(ananas: true);
 ## 🚀 Pour aller plus loin
 
 <details>
-<summary><b>Bonus — Les corrigés détaillés</b></summary>
+<summary><b>Bonus 1 — Le Choixpeau magique</b> (<code>match(true)</code>, <code>match</code> vs <code>switch</code>, <code>UnhandledMatchError</code>)</summary>
 
-- **Le Choixpeau magique** : `match(true)`, `switch` vs `match`, `UnhandledMatchError` — [`07a-choixpeau.php`](../solutions/chapitre-07/07a-choixpeau.php)
-- **Le GPS prudent** : `?->` en profondeur, Warning ≠ Error — [`07c-gps.php`](../solutions/chapitre-07/07c-gps.php)
-- **L'usine à gâteaux** : arguments nommés, `new` dans un initialiseur — [`07d-gateau.php`](../solutions/chapitre-07/07d-gateau.php)
-- **La chaîne de fabrication** (difficile) : callables de première classe — [`07b-pipeline.php`](../solutions/chapitre-07/07b-pipeline.php)
+Objectif : répartir des stagiaires dans quatre « maisons », **sans un seul `if`**.
+
+**1. Une classe `Choixpeau`**
+
+- `repartir(int $courage, int $ruse, int $sagesse, int $loyaute): string` — calcule `$meilleur = max(...)` des quatre scores, puis un **`match(true)`** qui retient la **première** condition vraie :
+
+  ```php
+  return match (true) {
+      $meilleur === 0        => 'Cafétéria',   // cas particulier EN PREMIER
+      $courage === $meilleur => 'GRYFFONDOR',
+      $ruse === $meilleur    => 'SERPENTARD',
+      $sagesse === $meilleur => 'SERDAIGLE',
+      default                => 'POUFSOUFFLE',
+  };
+  ```
+
+- `commentaire(string $maison): string` — un **`match` classique** (comparaison stricte `===` sur la valeur), **sans `default`**, qui renvoie une phrase par maison.
+
+**2. Répartissez ~5 stagiaires** (dont un « Fantôme » avec 0 partout) en affichant leurs scores et le verdict.
+
+**3. Réécrivez `commentaire()` avec un `switch`** et notez, dans un commentaire, **les 3 différences** :
+
+| | `match` | `switch` |
+|---|---|---|
+| nature | une **expression** (`$x = match(…)`) | une **instruction** (variable temporaire + `break`) |
+| comparaison | stricte `===` | lâche `==` |
+| enchaînement | aucun *fallthrough* | `break` oublié = bug classique |
+
+**4. Sans `default`** : appelez `$choixpeau->commentaire('POUDLARD EXPRESS')` et attrapez l'`\UnhandledMatchError`. Constatez qu'un `switch` sans `default`, lui, ne ferait **rien** en silence. C'est une fonctionnalité : le jour où vous ajoutez une 5ᵉ maison, `match` vous **force** à la traiter.
+
+</details>
+
+<details>
+<summary><b>Bonus 2 — Le GPS prudent</b> (opérateur nullsafe <code>?-></code>, Warning ≠ Error)</summary>
+
+**1. Trois classes emboîtées**, chacune pouvant manquer :
+
+```php
+class Pays  { public function __construct(public readonly string $nom) {} }
+class Ville { public function __construct(public readonly string $nom, public readonly ?Pays $pays = null) {} }
+class Utilisateur { public function __construct(public readonly string $pseudo, public readonly ?Ville $ville = null) {} }
+```
+
+**2. Trois utilisateurs** : Aline (ville + pays), Bob (ville **sans** pays), Carla (**pas** de ville).
+
+**3. `localiser(Utilisateur $u): string` en UNE ligne utile**, avec `?->` :
+
+```php
+$pays = $u->ville?->pays?->nom;   // null dès qu'un maillon est null
+return $pays === null
+    ? "{$u->pseudo} est quelque part dans le multivers 🌀"
+    : "{$u->pseudo} est en $pays";
+```
+
+**4. Réécrivez la même fonction avec des `if` imbriqués** et comptez les lignes (≈ 7 contre 1). Avec un niveau de profondeur de plus, la version `if` passerait à 10, la version nullsafe resterait à 1.
+
+**5. Le piège, à observer avec un `set_error_handler`** :
+
+- lire `$bob->ville->pays->nom` **sans** `?->` (le pays est `null`) → **Warning** (pas Error !), l'expression vaut `null`, **le script continue** ;
+- pour Carla, **deux** warnings en cascade (`->pays` sur `null`, puis `->nom` sur ce `null`) ;
+- en revanche, **appeler une méthode** sur `null` (`$carla->ville->getNom()`) est une **`Error` fatale**.
+
+**À retenir** (en commentaire) : `?->` court-circuite tout ce qui est à droite ; il ne marche **pas** à gauche d'une affectation ; et une chaîne `$a?->b?->c?->d?->e` est un signal qu'il faut sans doute corriger le problème **en amont** (valeur par défaut, Null Object…).
+
+</details>
+
+<details>
+<summary><b>Bonus 3 — L'usine à gâteaux</b> (arguments nommés, <code>new</code> dans un initialiseur)</summary>
+
+**1. Une classe `Gateau`** avec un constructeur promu à **6 paramètres, tous avec valeur par défaut** :
+`base = 'génoise'`, `garniture = 'chantilly'`, `nappage = 'chocolat'`, `bougies = 0`, `messageEcrit = ''`, `sansGluten = false`.
+
+Ajoutez `__toString()` qui construit une description en n'incluant les bougies / le message / la mention sans gluten que s'ils sont renseignés.
+
+**2. Quatre commandes**, chacune avec une forme d'appel différente :
+
+```php
+new Gateau();                                                   // le standard
+new Gateau(sansGluten: true);                                   // SEULEMENT le 6e paramètre
+new Gateau(garniture: 'crème pâtissière', base: 'pâte sablée'); // ordre libre
+new Gateau(bougies: 30, messageEcrit: 'Joyeux anniv Aline !', garniture: 'mousse');
+```
+
+**3. `new` dans un initialiseur (PHP 8.1)** : une classe `Commande` dont le constructeur a
+`private Gateau $gateau = new Gateau()` comme valeur par défaut (avant 8.1, il fallait accepter `null` puis créer l'objet dans le corps). Méthode `ticket(): string`.
+
+**4. La règle des arguments** : montrez que `new Gateau(garniture: 'fraise', 'génoise')` est une **erreur fatale** — un argument **positionnel** ne peut jamais suivre un argument **nommé**. `new Gateau('génoise', garniture: 'fraise')` est correct.
+
+> 💡 Terminez avec quelques exemples d'arguments nommés sur des **fonctions natives** : `array_slice($t, offset: 2, length: 3)`, `in_array($x, $t, strict: true)`, `json_encode($d, flags: JSON_PRETTY_PRINT)`.
+
+</details>
+
+<details>
+<summary><b>Bonus 4 — La chaîne de fabrication</b> (difficile : callables de première classe, chaînage fluide)</summary>
+
+Vous construisez un « tuyau » qui fait passer une valeur à travers une suite de transformations.
+
+**1. Une classe `Pipeline`**
+
+```php
+class Pipeline
+{
+    /** @var \Closure[] */
+    private array $etapes = [];
+
+    public function ajouter(callable $etape): static
+    {
+        $this->etapes[] = \Closure::fromCallable($etape);
+        return $this;   // ← renvoyer $this permet le chaînage ->ajouter(...)->ajouter(...)
+    }
+
+    public function executer(mixed $valeur): mixed
+    {
+        foreach ($this->etapes as $etape) {
+            $valeur = $etape($valeur);
+        }
+        return $valeur;
+    }
+}
+```
+
+**2. Un nettoyeur de pseudo**, en utilisant la syntaxe **callable de première classe `f(...)`** (PHP 8.1) :
+
+```php
+$nettoyeur = (new Pipeline())
+    ->ajouter(trim(...))
+    ->ajouter(strtolower(...))
+    ->ajouter(fn(string $s) => str_replace(' ', '_', $s))
+    ->ajouter(fn(string $s) => substr($s, 0, 15));
+
+echo $nettoyeur->executer('   Le Grand Sorcier DU Code   ');  // le_grand_sorcie
+```
+
+**3. Pourquoi `strtoupper(...)` plutôt que `'strtoupper'` ?** Démontrez-le : une chaîne `'strtouper'` (avec une typo) ne provoque une erreur **qu'à l'appel** ; la syntaxe `strtouper(...)` est vérifiée **avant** l'exécution. Notez aussi les 3 anciennes syntaxes (`'f'`, `[$obj, 'm']`, `'C::m'`) que `f(...)` unifie.
+
+**4. Bonus PHP 8.5** : si l'opérateur pipe `|>` est dispo, montrez que
+`'   Texte   ' |> trim(...) |> strtolower(...)` fait exactement ce que votre `Pipeline` fait à la main — en se lisant de gauche à droite au lieu de `strtolower(trim('   Texte   '))`.
 
 </details>
 

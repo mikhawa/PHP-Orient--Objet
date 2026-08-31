@@ -169,11 +169,111 @@ echo $calc->diviser(10, 0);
 ## 🚀 Pour aller plus loin
 
 <details>
-<summary><b>Bonus — Les corrigés détaillés</b></summary>
+<summary><b>Bonus 1 — Les deux guildes</b> (namespace ↔ dossier, alias, constantes de namespace)</summary>
 
-- **Les deux guildes**, version complète avec constantes de namespace — [`solutions/chapitre-04/guildes/`](../solutions/chapitre-04/guildes/)
-- **Le piège de l'Exception**, avec les deux façons de le corriger — [`04b-piege-exception.php`](../solutions/chapitre-04/04b-piege-exception.php)
-- **Organiser un projet** en namespaces, en préparation du chapitre 5 — [`04c-cartographe-corrige.md`](../solutions/chapitre-04/04c-cartographe-corrige.md)
+Version complète de l'exercice 4.2, avec des classes qui portent vraiment un état.
+
+**1. Deux fichiers, deux namespaces qui suivent l'arborescence des dossiers :**
+
+`guildes/Mages/Potion.php`
+
+```php
+<?php
+namespace Guildes\Mages;   // guildes/Mages  →  Guildes\Mages
+
+class Potion
+{
+    public function __construct(
+        public readonly string $nom,
+        public readonly int $mana,
+    ) {}
+
+    public function boire(): string
+    {
+        return "✨ +{$this->mana} mana ! Vous scintillez légèrement.";
+    }
+}
+
+const DEVISE = 'La connaissance avant la puissance.';  // une constante DANS un namespace
+```
+
+`guildes/Alchimistes/Potion.php` : même structure, namespace `Guildes\Alchimistes`, une méthode `boire()` qui renvoie plutôt `"💥 BOUM. (dégâts : {$this->degats})"`, et sa propre `DEVISE`.
+
+**2. Un fichier `boutique.php`** qui inclut les deux (`require_once` — l'autoload, c'est le chapitre 5) et les utilise de **deux façons** :
+
+- avec le **nom pleinement qualifié** : `new \Guildes\Mages\Potion('Élixir', 40)` ;
+- avec des **alias** (dans un second fichier, car `use` doit être en haut) :
+
+  ```php
+  use Guildes\Mages\Potion as PotionDeMana;
+  use Guildes\Alchimistes\Potion as PotionInstable;
+  ```
+
+**3. Les constantes de namespace :** affichez `\Guildes\Mages\DEVISE` et `\Guildes\Alchimistes\DEVISE`.
+
+> ⚠️ Piège à noter en commentaire : une constante de namespace s'écrit `\Guildes\Mages\DEVISE`, **pas** `Guildes\Mages::DEVISE` (ça, c'est une constante de *classe*). Et `use` en haut d'un fichier = importer un namespace ; `use` dans une classe = utiliser un *trait*. Rien à voir.
+
+</details>
+
+<details>
+<summary><b>Bonus 2 — Le piège de l'Exception (version complète)</b></summary>
+
+Reprenez le code de l'exercice 4.5 et répondez **par écrit** aux questions, puis vérifiez chaque réponse.
+
+```php
+<?php
+namespace App\Service;
+
+class Calculatrice
+{
+    public function diviser(float $a, float $b): float
+    {
+        if ($b == 0.0) {
+            throw new Exception('Division par zéro !');
+        }
+        return $a / $b;
+    }
+}
+
+try {
+    echo (new Calculatrice())->diviser(10, 0);
+} catch (Exception $e) {
+    echo 'Attrapée : ' . $e->getMessage();
+}
+```
+
+1. **Quel nom exact** PHP cherche-t-il quand il rencontre `new Exception(...)` dans ce fichier ? (Réponse : `App\Service\Exception` — tout nom de classe non préfixé est résolu **relativement au namespace courant**.)
+2. **Pourquoi** `strlen()` ou `count()` fonctionnent sans backslash dans un namespace, mais pas `Exception` ? (Réponse : le repli automatique vers le namespace global ne vaut que pour les **fonctions et constantes** natives, jamais pour les **classes**.)
+3. **Corrigez de deux façons** :
+   - le préfixe : `throw new \Exception(...)` ;
+   - l'importation : `use Exception;` en haut du fichier, puis `throw new Exception(...)`.
+4. **Le bug caché dans le `catch`** : même si le `throw` fonctionnait, `catch (Exception $e)` signifie `catch (\App\Service\Exception $e)` → il n'attraperait **jamais** une vraie `\Exception`. Corrigez-le aussi.
+
+**Règle à retenir** : dans un fichier avec `namespace`, préfixez toujours les classes natives (`\Exception`, `\PDO`, `\DateTimeImmutable`) ou importez-les en haut avec `use`.
+
+</details>
+
+<details>
+<summary><b>Bonus 3 — Le cartographe de projet</b> (organiser un projet en namespaces, préparation du chapitre 5)</summary>
+
+Exercice **sur papier** (aucun code à exécuter). On vous donne une liste de classes d'un petit jeu :
+
+`Hero`, `Monstre`, `Objet`, `HeroManager`, `MonstreManager`, `Combat`, `GenerateurDeDonjon`, `HeroMortException`, `DonjonVideException`, plus un point d'entrée `public/index.php`.
+
+**Votre mission :** proposez une arborescence de dossiers et les namespaces correspondants, en respectant ces règles (celles que l'autoloader du chapitre 5 saura résoudre) :
+
+- **un segment de namespace = un dossier**, à la casse exacte (`App\Manager\HeroManager` → `App/Manager/HeroManager.php`) ;
+- **un fichier = une classe**, du nom exact de la classe ;
+- on regroupe les classes par **rôle technique** : `Model/`, `Manager/`, `Service/`, `Exception/` ;
+- **aucune classe dans le namespace global** (pour ne jamais entrer en collision avec une lib tierce ou une future classe native) ;
+- `public/index.php` **n'a pas de namespace** : ce n'est pas une classe, c'est un point d'entrée.
+
+Écrivez ensuite, en une ou deux phrases, **pourquoi** ce découpage par rôle (et non « tout ce qui touche au héros dans un dossier `Hero/` »). Puis montrez la transformation `App\Manager\HeroManager` → chemin de fichier que fera l'autoloader :
+
+```php
+str_replace('\\', '/', 'App\Manager\HeroManager') . '.php'
+// → 'App/Manager/HeroManager.php'
+```
 
 </details>
 
