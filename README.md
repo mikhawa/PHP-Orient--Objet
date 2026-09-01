@@ -49,7 +49,6 @@ Chaque chapitre a sa série d'exercices dans le dossier **[exercices/](./exercic
 
 ## Menu de navigation
 - [code](./)
-- [🎮 Exercices par chapitre](./exercices/)
 - [Introduction](#php-8-orienté-objet)
     - [0. Du procédural à l'objet](#0-du-procédural-à-lobjet)
         - [🎮 Exercices du chapitre 0](./exercices/chapitre-00.md)
